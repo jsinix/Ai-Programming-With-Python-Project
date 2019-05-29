@@ -1,3 +1,4 @@
+# All the imports
 import matplotlib.pyplot as plt
 import torch, time, sys
 from torch import nn
@@ -7,6 +8,7 @@ from torchvision import datasets, transforms, models
 from collections import OrderedDict
 import json, os, argparse 
 
+# CLI inputs
 def process_arguments(args):
     parser = argparse.ArgumentParser(description="Command Line App For Image Classifier")
     parser.add_argument('-a',
@@ -60,6 +62,7 @@ train_dir = data_dir + '/train'
 valid_dir = data_dir + '/valid'
 test_dir = data_dir + '/test'
 
+# Datasets
 train_transforms = transforms.Compose([transforms.RandomRotation(30),
                                        transforms.RandomResizedCrop(224),
                                        transforms.RandomHorizontalFlip(),
@@ -91,6 +94,7 @@ trainloader = torch.utils.data.DataLoader(train_data, batch_size=96, shuffle=Tru
 validloader = torch.utils.data.DataLoader(valid_data, batch_size=96)
 testloader = torch.utils.data.DataLoader(test_data, batch_size=96)
 
+# cat to name mapping
 with open('/home/workspace/aipnd-project/cat_to_name.json', 'r') as f:
     cat_to_name = json.load(f)
 
@@ -98,6 +102,7 @@ with open('/home/workspace/aipnd-project/cat_to_name.json', 'r') as f:
 device = torch.device("cuda" if userOptions.get('gpu')==True else "cpu")
 hidden_value = userOptions.get('hidden_units')
 
+# prebuilt model classifiers to import from torchview
 densenet_class = nn.Sequential(nn.Linear(1024, hidden_value),
                                  nn.ReLU(),
                                  nn.Dropout(0.2),
@@ -133,6 +138,7 @@ criterion = nn.NLLLoss()
 optimizer = optim.Adam(model.classifier.parameters(), lr=userOptions.get('learning_rate'))
 model.to(device);
 
+# Some variables 
 epochs = userOptions.get('epochs')
 steps = 0
 running_loss = 0
@@ -140,6 +146,7 @@ print_every = 5
 print("Using Device: {}".format(device))
 train_losses, valid_losses = [], []
 
+# Train the model while validating 
 for epoch in range(epochs):
     for inputs, labels in trainloader:
         steps += 1
@@ -179,6 +186,7 @@ for epoch in range(epochs):
         
 print ("Complete") 
 
+# testing the model 
 # TODO: Do validation on the test set
 test_loss = 0
 accuracy = 0
